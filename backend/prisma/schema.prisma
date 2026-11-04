@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------
+// Candidato e Concurso pertencem às colegas (Evelyn e Maria Vitória).
+// Estão aqui só para o relacionamento funcionar; ao juntar o projeto,
+// vale a versão delas dos campos — mantenha apenas o campo `inscricoes`.
+// ---------------------------------------------------------------
+model Candidato {
+  id           Int         @id @default(autoincrement())
+  nome         String
+  cpf          String      @unique
+  email        String
+  telefone     String?
+  criadoEm     DateTime    @default(now()) @map("criado_em")
+  atualizadoEm DateTime    @updatedAt @map("atualizado_em")
+  inscricoes   Inscricao[]
+
+  @@map("candidatos")
+}
+
+model Concurso {
+  id               Int         @id @default(autoincrement())
+  nome             String
+  orgao            String
+  descricao        String
+  dataAbertura     DateTime    @map("data_abertura")
+  dataEncerramento DateTime    @map("data_encerramento")
+  status           String      @default("ABERTO") // ABERTO | ENCERRADO
+  criadoEm         DateTime    @default(now()) @map("criado_em")
+  atualizadoEm     DateTime    @updatedAt @map("atualizado_em")
+  inscricoes       Inscricao[]
+
+  @@map("concursos")
+}
+
+// ---------------------------------------------------------------
+// Módulo de inscrições (Anny)
+// ---------------------------------------------------------------
+model Inscricao {
+  id          Int      @id @default(autoincrement())
+  candidatoId Int      @map("candidato_id")
+  concursoId  Int      @map("concurso_id")
+  data        DateTime @default(now())
+  status      String   @default("CONFIRMADA")
+
+  candidato Candidato @relation(fields: [candidatoId], references: [id], onDelete: Cascade)
+  concurso  Concurso  @relation(fields: [concursoId], references: [id], onDelete: Cascade)
+
+  // Garante no banco que o candidato não se inscreve 2x no mesmo concurso
+  @@unique([candidatoId, concursoId])
+  @@map("inscricoes")
+}
