@@ -8,6 +8,8 @@ import { errorHandler } from "./middlewares/errorHandler.js";
 import inscricaoRoutes from "./routes/inscricaoRoutes.js";
 // Ao juntar o projeto, importe aqui as rotas de concursos e candidatos.
 
+import concursoRoutes from "./routes/concursoRoutes.js";
+
 dotenv.config();
 
 export const app = express();
@@ -18,6 +20,8 @@ app.use(express.json());
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(inscricaoRoutes);
+
+app.use(concursoRoutes);
 
 // Sempre por último
 app.use(errorHandler);
