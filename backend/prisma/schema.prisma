@@ -1,3 +1,4 @@
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -7,9 +8,7 @@ datasource db {
 }
 
 // ---------------------------------------------------------------
-// Candidato e Concurso pertencem às colegas (Evelyn e Maria Vitória).
-// Estão aqui só para o relacionamento funcionar; ao juntar o projeto,
-// vale a versão delas dos campos — mantenha apenas o campo `inscricoes`.
+// Módulo de candidatos (Evelyn)
 // ---------------------------------------------------------------
 model Candidato {
   id           Int         @id @default(autoincrement())
@@ -24,6 +23,9 @@ model Candidato {
   @@map("candidatos")
 }
 
+// ---------------------------------------------------------------
+// Módulo de concursos (Maria Vitória)
+// ---------------------------------------------------------------
 model Concurso {
   id               Int         @id @default(autoincrement())
   nome             String
@@ -35,6 +37,7 @@ model Concurso {
   criadoEm         DateTime    @default(now()) @map("criado_em")
   atualizadoEm     DateTime    @updatedAt @map("atualizado_em")
   inscricoes       Inscricao[]
+  cargos           Cargo[]
 
   @@map("concursos")
 }
@@ -52,7 +55,20 @@ model Inscricao {
   candidato Candidato @relation(fields: [candidatoId], references: [id], onDelete: Cascade)
   concurso  Concurso  @relation(fields: [concursoId], references: [id], onDelete: Cascade)
 
-  // Garante no banco que o candidato não se inscreve 2x no mesmo concurso
+  // Impede duas inscrições do mesmo candidato no mesmo concurso
   @@unique([candidatoId, concursoId])
   @@map("inscricoes")
+}
+
+// ---------------------------------------------------------------
+// Módulo de cargos (Maria Vitória)
+// ---------------------------------------------------------------
+model Cargo {
+  id         Int    @id @default(autoincrement())
+  nome       String
+  concursoId Int    @map("concurso_id")
+
+  concurso Concurso @relation(fields: [concursoId], references: [id])
+
+  @@map("cargos")
 }

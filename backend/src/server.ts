@@ -9,7 +9,7 @@ import inscricaoRoutes from "./routes/inscricaoRoutes.js";
 // Ao juntar o projeto, importe aqui as rotas de concursos e candidatos.
 
 import concursoRoutes from "./routes/concursoRoutes.js";
-
+import cargoRoutes from "./routes/cargoRoutes.js";
 dotenv.config();
 
 export const app = express();
@@ -22,7 +22,7 @@ app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(inscricaoRoutes);
 
 app.use(concursoRoutes);
-
+app.use(cargoRoutes);
 // Sempre por último
 app.use(errorHandler);
 
