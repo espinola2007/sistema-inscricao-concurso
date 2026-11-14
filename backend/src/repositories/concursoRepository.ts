@@ -4,7 +4,7 @@ import { prisma } from "../config/prisma.js";
 import type {
   CriarConcursoInput,
   AtualizarConcursoInput,
-} from "../schemas/concurso.js";
+} from "@concursos/shared";
 
 // Mantém a função usada pelo módulo de inscrições de Anny.
 export async function findById(id: number) {

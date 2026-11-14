@@ -8,7 +8,7 @@ import { validarBody } from "../middlewares/validarSchema.js";
 import {
   criarConcursoSchema,
   atualizarConcursoSchema,
-} from "../schemas/concurso.js";
+} from "@concursos/shared";
 
 const router = Router();
 

@@ -7,7 +7,7 @@ import {
   criarConcursoSchema,
   type CriarConcursoInput,
   type AtualizarConcursoInput,
-} from "../schemas/concurso.js";
+} from "@concursos/shared";
 
 export async function listarConcursos() {
   return repository.findAll();

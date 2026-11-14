@@ -4,7 +4,7 @@ import { prisma } from "../config/prisma.js";
 import type {
   CriarCargoInput,
   AtualizarCargoInput,
-} from "../schemas/cargo.js";
+} from "@concursos/shared";
 
 export async function findAll() {
   return prisma.cargo.findMany({

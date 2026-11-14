@@ -8,7 +8,7 @@ import { validarBody } from "../middlewares/validarSchema.js";
 import {
   criarCargoSchema,
   atualizarCargoSchema,
-} from "../schemas/cargo.js";
+} from "@concursos/shared";
 
 const router = Router();
 

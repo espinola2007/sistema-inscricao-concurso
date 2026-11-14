@@ -7,7 +7,7 @@ import { HttpError } from "../middlewares/errorHandler.js";
 import type {
   CriarCargoInput,
   AtualizarCargoInput,
-} from "../schemas/cargo.js";
+} from "@concursos/shared";
 
 async function verificarConcurso(concursoId: number) {
   const concurso = await concursoRepository.findById(concursoId);
