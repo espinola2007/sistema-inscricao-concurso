@@ -1,7 +1,9 @@
+
 import type { Request, Response, NextFunction } from "express";
+import { Prisma } from "@prisma/client";
 import { ZodError } from "zod";
 
-// Erro de regra de negócio com o status HTTP correto (404, 409, 422...)
+// Erros de regras de negócio: 400, 404, 409, 422...
 export class HttpError extends Error {
   constructor(
     public status: number,
@@ -13,16 +15,46 @@ export class HttpError extends Error {
 
 export function errorHandler(
   err: Error,
-  req: Request,
+  _req: Request,
   res: Response,
-  next: NextFunction,
+  _next: NextFunction,
 ) {
+  // Erros de regras de negócio.
   if (err instanceof HttpError) {
-    return res.status(err.status).json({ mensagem: err.message });
+    return res.status(err.status).json({
+      mensagem: err.message,
+    });
   }
+
+  // Dados inválidos segundo os schemas Zod.
   if (err instanceof ZodError) {
-    return res.status(400).json({ mensagem: "Parâmetros inválidos", detalhes: err.issues });
+    return res.status(400).json({
+      mensagem: "Dados inválidos",
+      detalhes: err.issues,
+    });
   }
+
+  // JSON malformado recebido pelo Express.
+  if (err instanceof SyntaxError && "body" in err) {
+    return res.status(400).json({
+      mensagem: "JSON inválido. Verifique o corpo da requisição.",
+    });
+  }
+
+  // Violação de campo único no banco de dados.
+  if (
+    err instanceof Prisma.PrismaClientKnownRequestError &&
+    err.code === "P2002"
+  ) {
+    return res.status(409).json({
+      mensagem: "Já existe um registro com esse valor único.",
+    });
+  }
+
+  // Erros inesperados.
   console.error(err);
-  return res.status(500).json({ mensagem: "Erro interno do servidor" });
+
+  return res.status(500).json({
+    mensagem: "Erro interno do servidor",
+  });
 }
