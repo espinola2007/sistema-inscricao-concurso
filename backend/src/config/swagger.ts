@@ -17,6 +17,8 @@ import {
   atualizarConcursoSchema,
   criarCargoSchema,
   atualizarCargoSchema,
+  cadastroUsuarioSchema,
+  loginUsuarioSchema,
 } from "@concursos/shared";
 
 extendZodWithOpenApi(z);
@@ -246,6 +248,36 @@ registry.registerPath({
 // --------------------------------------------------
 // GERAÇÃO DO DOCUMENTO SWAGGER
 // --------------------------------------------------
+
+registry.registerPath({
+  method: "post",
+  path: "/login",
+  summary: "Autentica um usuário",
+  tags: ["Autenticação"],
+  request: {
+    body: json(loginUsuarioSchema),
+  },
+  responses: {
+    200: resposta("Credenciais válidas"),
+    400: resposta("Dados inválidos"),
+    401: resposta("E-mail ou senha inválidos"),
+  },
+});
+
+registry.registerPath({
+  method: "post",
+  path: "/usuarios",
+  summary: "Cadastra um usuário",
+  tags: ["Autenticação"],
+  request: {
+    body: json(cadastroUsuarioSchema),
+  },
+  responses: {
+    201: resposta("Usuário cadastrado"),
+    400: resposta("Dados inválidos"),
+    409: resposta("E-mail já cadastrado"),
+  },
+});
 
 const generator = new OpenApiGeneratorV3(registry.definitions);
 
