@@ -11,6 +11,7 @@ import inscricaoRoutes from "./routes/inscricaoRoutes.js";
 import concursoRoutes from "./routes/concursoRoutes.js";
 import cargoRoutes from "./routes/cargoRoutes.js";
 dotenv.config();
+import authRoutes from "./routes/authRoutes.js";
 
 export const app = express();
 
@@ -24,6 +25,7 @@ app.use(inscricaoRoutes);
 app.use(concursoRoutes);
 app.use(cargoRoutes);
 // Sempre por último
+app.use(authRoutes);
 app.use(errorHandler);
 
 const PORT = Number(process.env.PORT || 3000);
