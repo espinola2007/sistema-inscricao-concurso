@@ -28,3 +28,13 @@ export type {
   InscricaoInput,
   InscricaoFiltroInput,
 } from "./schemas/inscricao.js";
+
+export {
+  cadastroUsuarioSchema,
+  loginUsuarioSchema,
+} from "./schemas/usuario.js";
+
+export type {
+  CadastroUsuarioInput,
+  LoginUsuarioInput,
+} from "./schemas/usuario.js";

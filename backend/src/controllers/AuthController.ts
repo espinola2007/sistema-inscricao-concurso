@@ -1,15 +1,11 @@
 
 import type { Request, Response } from "express";
-import { z } from "zod";
+import { loginUsuarioSchema } from "@concursos/shared";
 import { autenticar } from "../services/authService.js";
 
-const loginSchema = z.object({
-  email: z.email(),
-  senha: z.string().min(1),
-});
 
 export async function login(req: Request, res: Response) {
-  const validacao = loginSchema.safeParse(req.body);
+  const validacao = loginUsuarioSchema.safeParse(req.body);
 
   if (!validacao.success) {
     return res.status(400).json({
@@ -30,4 +26,34 @@ export async function login(req: Request, res: Response) {
     mensagem: "Credenciais válidas",
     usuario,
   });
+  
 }
+
+import { cadastroUsuarioSchema } from "@concursos/shared";
+import { cadastrar } from "../services/authService.js";
+
+export async function cadastro(req: Request, res: Response) {
+  const validacao = cadastroUsuarioSchema.safeParse(req.body);
+
+  if (!validacao.success) {
+    return res.status(400).json({
+      mensagem: "Dados inválidos",
+      detalhes: validacao.error.issues.map((erro) => ({
+        campo: erro.path.join("."),
+        mensagem: erro.message,
+      })),
+    });
+  }
+
+  const { nome, email, senha } = validacao.data;
+  const usuario = await cadastrar(nome, email, senha);
+
+  if (!usuario) {
+    return res.status(409).json({
+      mensagem: "Este e-mail já está cadastrado",
+    });
+  }
+
+  return res.status(201).json(usuario);
+}
+
