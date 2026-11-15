@@ -38,3 +38,13 @@ export type {
   CadastroUsuarioInput,
   LoginUsuarioInput,
 } from "./schemas/usuario.js";
+
+export {
+  criarCandidatoSchema,
+  atualizarCandidatoSchema,
+} from "./schemas/candidato.js";
+
+export type {
+  CriarCandidatoInput,
+  AtualizarCandidatoInput,
+} from "./schemas/candidato.js";

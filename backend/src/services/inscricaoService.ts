@@ -66,3 +66,63 @@ export async function criarInscricao({ candidatoId, concursoId }: InscricaoInput
 
   return await inscricaoRepository.create({ candidatoId, concursoId });
 }
+
+
+export async function atualizarInscricao(
+  id: number,
+  dados: InscricaoInput,
+) {
+  // Verifica se a inscrição existe.
+  const inscricao = await inscricaoRepository.findById(id);
+
+  if (!inscricao) {
+    throw new HttpError(404, "Inscrição não encontrada.");
+  }
+
+  // Verifica se o candidato existe.
+  const candidato = await candidatoRepository.findById(dados.candidatoId);
+
+  if (!candidato) {
+    throw new HttpError(404, "Candidato não encontrado.");
+  }
+
+  // Verifica se o concurso existe.
+  const concurso = await concursoRepository.findById(dados.concursoId);
+
+  if (!concurso) {
+    throw new HttpError(404, "Concurso não encontrado.");
+  }
+
+  // Verifica se o concurso permite inscrições.
+  if (!inscricoesAbertas(concurso)) {
+    throw new HttpError(
+      422,
+      "As inscrições deste concurso não estão abertas.",
+    );
+  }
+
+  // Impede duplicidade, mas permite manter a própria inscrição.
+  const existente = await inscricaoRepository.findByCandidatoConcurso(
+    dados.candidatoId,
+    dados.concursoId,
+  );
+
+  if (existente && existente.id !== id) {
+    throw new HttpError(
+      409,
+      "Este candidato já está inscrito neste concurso.",
+    );
+  }
+
+  return inscricaoRepository.update(id, dados);
+}
+
+export async function excluirInscricao(id: number) {
+  const inscricao = await inscricaoRepository.findById(id);
+
+  if (!inscricao) {
+    throw new HttpError(404, "Inscrição não encontrada.");
+  }
+
+  await inscricaoRepository.remove(id);
+}

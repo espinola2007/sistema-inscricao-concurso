@@ -21,3 +21,36 @@ export async function cadastrar(req: Request, res: Response) {
   const inscricao = await service.criarInscricao(req.body);
   return res.status(201).json(inscricao);
 }
+
+
+import { HttpError } from "../middlewares/errorHandler.js";
+
+function validarId(valor: string | string[] | undefined): number {
+  if (typeof valor !== "string" || !/^\d+$/.test(valor)) {
+    throw new HttpError(400, "ID de inscrição inválido.");
+  }
+
+  const id = Number(valor);
+
+  if (!Number.isSafeInteger(id) || id < 1) {
+    throw new HttpError(400, "ID de inscrição inválido.");
+  }
+
+  return id;
+}
+
+export async function atualizar(req: Request, res: Response) {
+  const inscricao = await service.atualizarInscricao(
+    validarId(req.params.id),
+    req.body,
+  );
+
+  return res.json(inscricao);
+}
+
+export async function excluir(req: Request, res: Response) {
+  await service.excluirInscricao(validarId(req.params.id));
+
+  return res.status(204).send();
+}
+

@@ -12,6 +12,7 @@ import concursoRoutes from "./routes/concursoRoutes.js";
 import cargoRoutes from "./routes/cargoRoutes.js";
 dotenv.config();
 import authRoutes from "./routes/authRoutes.js";
+import candidatoRoutes from "./routes/candidatoRoutes.js";
 
 export const app = express();
 
@@ -21,9 +22,9 @@ app.use(express.json());
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(inscricaoRoutes);
-
 app.use(concursoRoutes);
 app.use(cargoRoutes);
+app.use(candidatoRoutes);
 // Sempre por último
 app.use(authRoutes);
 app.use(errorHandler);

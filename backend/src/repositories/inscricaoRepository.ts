@@ -39,3 +39,23 @@ export async function create(data: { candidatoId: number; concursoId: number }) 
   return await prisma.inscricao.create({ data, include: incluir });
   //INSERT INTO inscricoes (candidato_id, concurso_id) VALUES (?, ?);
 }
+
+export async function update(
+  id: number,
+  dados: { candidatoId: number; concursoId: number },
+) {
+  return prisma.inscricao.update({
+    where: { id },
+    data: {
+      candidatoId: dados.candidatoId,
+      concursoId: dados.concursoId,
+    },
+    include: incluir,
+  });
+}
+
+export async function remove(id: number) {
+  return prisma.inscricao.delete({
+    where: { id },
+  });
+}

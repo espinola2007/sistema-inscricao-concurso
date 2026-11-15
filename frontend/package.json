@@ -10,8 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@concursos/shared": "file:../shared",
     "@mantine/core": "^9.7.4",
     "@mantine/hooks": "^9.7.4",
+    "axios": "^1.21.1",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },

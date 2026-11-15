@@ -1,25 +1,55 @@
-// Cliente HTTP único. A T pode evoluir este arquivo (loading, token etc.).
+
+import axios, { AxiosError } from 'axios'
+import type { Method } from 'axios'
+
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
+
+const api = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})
 
 export class ApiError extends Error {
   status: number
+
   constructor(status: number, message: string) {
     super(message)
     this.status = status
   }
 }
 
-export async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const resposta = await fetch(`${API_URL}${path}`, {
-    headers: { 'Content-Type': 'application/json' },
-    ...init,
-  })
-  if (!resposta.ok) {
-    const corpo = await resposta.json().catch(() => ({}))
-    const detalhes = Array.isArray(corpo.detalhes)
-      ? ': ' + corpo.detalhes.map((d: { mensagem: string }) => d.mensagem).join('; ')
-      : ''
-    throw new ApiError(resposta.status, (corpo.mensagem ?? 'Erro inesperado') + detalhes)
+export async function request<T>(
+  path: string,
+  init?: RequestInit
+): Promise<T> {
+  try {
+    const resposta = await api.request<T>({
+      url: path,
+      method: (init?.method ?? 'GET') as Method,
+      data: init?.body,
+      headers: init?.headers as Record<string, string> | undefined,
+    })
+
+    return resposta.status === 204 ? (undefined as T) : resposta.data
+  } catch (erro) {
+    if (erro instanceof AxiosError && erro.response) {
+      const corpo = erro.response.data
+      const detalhes = Array.isArray(corpo?.detalhes)
+        ? ': ' + corpo.detalhes
+            .map((d: { mensagem: string }) => d.mensagem)
+            .join('; ')
+        : ''
+
+      throw new ApiError(
+        erro.response.status,
+        (corpo?.mensagem ?? 'Erro inesperado') + detalhes
+      )
+    }
+
+    throw erro
   }
-  return resposta.status === 204 ? (undefined as T) : resposta.json()
 }
+
+export default api

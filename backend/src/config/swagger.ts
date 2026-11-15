@@ -19,6 +19,8 @@ import {
   atualizarCargoSchema,
   cadastroUsuarioSchema,
   loginUsuarioSchema,
+  criarCandidatoSchema,
+  atualizarCandidatoSchema,
 } from "@concursos/shared";
 
 extendZodWithOpenApi(z);
@@ -98,6 +100,41 @@ registry.registerPath({
     422: resposta("Concurso com inscrições encerradas"),
   },
 });
+
+
+registry.registerPath({
+  method: "put",
+  path: "/inscricoes/{id}",
+  summary: "Atualiza uma inscrição",
+  tags: ["Inscrições"],
+  request: {
+    params: parametrosId,
+    body: json(inscricaoSchema),
+  },
+  responses: {
+    200: resposta("Inscrição atualizada", Inscricao),
+    400: resposta("Dados inválidos"),
+    404: resposta("Inscrição, candidato ou concurso não encontrado"),
+    409: resposta("Candidato já inscrito no concurso"),
+    422: resposta("Concurso com inscrições encerradas"),
+  },
+});
+
+registry.registerPath({
+  method: "delete",
+  path: "/inscricoes/{id}",
+  summary: "Exclui uma inscrição",
+  tags: ["Inscrições"],
+  request: {
+    params: parametrosId,
+  },
+  responses: {
+    204: resposta("Inscrição excluída"),
+    400: resposta("ID inválido"),
+    404: resposta("Inscrição não encontrada"),
+  },
+});
+
 
 // --------------------------------------------------
 // CONCURSOS
@@ -278,6 +315,85 @@ registry.registerPath({
     409: resposta("E-mail já cadastrado"),
   },
 });
+
+
+ // --------------------------------------------------
+ // CANDIDATOS
+ // --------------------------------------------------
+
+registry.registerPath({
+  method: "get",
+  path: "/candidatos",
+  summary: "Lista candidatos",
+  tags: ["Candidatos"],
+  responses: {
+    200: resposta("Lista de candidatos retornada com sucesso"),
+  },
+});
+
+registry.registerPath({
+  method: "get",
+  path: "/candidatos/{id}",
+  summary: "Busca candidato por ID",
+  tags: ["Candidatos"],
+  request: {
+    params: parametrosId,
+  },
+  responses: {
+    200: resposta("Candidato encontrado"),
+    400: resposta("ID inválido"),
+    404: resposta("Candidato não encontrado"),
+  },
+});
+
+registry.registerPath({
+  method: "post",
+  path: "/candidatos",
+  summary: "Cadastra candidato",
+  tags: ["Candidatos"],
+  request: {
+    body: json(criarCandidatoSchema),
+  },
+  responses: {
+    201: resposta("Candidato cadastrado"),
+    400: resposta("Dados inválidos"),
+    409: resposta("CPF já cadastrado"),
+  },
+});
+
+registry.registerPath({
+  method: "put",
+  path: "/candidatos/{id}",
+  summary: "Atualiza candidato",
+  tags: ["Candidatos"],
+  request: {
+    params: parametrosId,
+    body: json(atualizarCandidatoSchema),
+  },
+  responses: {
+    200: resposta("Candidato atualizado"),
+    400: resposta("Dados inválidos"),
+    404: resposta("Candidato não encontrado"),
+    409: resposta("CPF já cadastrado"),
+  },
+});
+
+registry.registerPath({
+  method: "delete",
+  path: "/candidatos/{id}",
+  summary: "Exclui candidato",
+  tags: ["Candidatos"],
+  request: {
+    params: parametrosId,
+  },
+  responses: {
+    204: resposta("Candidato excluído"),
+    400: resposta("ID inválido"),
+    404: resposta("Candidato não encontrado"),
+    409: resposta("Candidato possui inscrições vinculadas"),
+  },
+});
+
 
 const generator = new OpenApiGeneratorV3(registry.definitions);
 
