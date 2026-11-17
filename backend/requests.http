@@ -1,0 +1,14 @@
+### Registrar inscrição
+POST http://localhost:3000/inscricoes
+Content-Type: application/json
+
+{ "candidatoId": 1, "concursoId": 1 }
+
+### Listar todas
+GET http://localhost:3000/inscricoes
+
+### Filtrar por candidato / concurso
+GET http://localhost:3000/inscricoes?candidatoId=1&concursoId=1
+
+### Buscar por ID
+GET http://localhost:3000/inscricoes/1
