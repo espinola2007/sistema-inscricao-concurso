@@ -234,7 +234,7 @@ export function InscricoesPage() {
                 label: `${candidato.nome} (${candidato.cpf})`,
               }))}
               value={candidatoId}
-              onChange={setCandidatoId}
+              onChange={(valor) => setCandidatoId(String(valor ?? ""))}
             />
 
             <Select
@@ -253,7 +253,7 @@ export function InscricoesPage() {
                   String(concurso.id) !== concursoId,
               }))}
               value={concursoId}
-              onChange={setConcursoId}
+              onChange={(valor) => setConcursoId(String(valor ?? ""))}
             />
 
             <Button type="submit" loading={salvando}>

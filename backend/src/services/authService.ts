@@ -22,6 +22,7 @@ export async function autenticar(email: string, senha: string) {
     id: usuario.id,
     nome: usuario.nome,
     email: usuario.email,
+    isAdmin: usuario.isAdmin,
   };
 }
 
@@ -44,9 +45,10 @@ export async function cadastrar(
     senhaHash,
   });
 
-  return {
+    return {
     id: usuario.id,
     nome: usuario.nome,
     email: usuario.email,
+    isAdmin: usuario.isAdmin,
   };
 }

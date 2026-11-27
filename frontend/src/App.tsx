@@ -1,4 +1,6 @@
+
 import { useState } from 'react'
+import { definirToken } from './services/api'
 
 import {
   Anchor,
@@ -17,28 +19,35 @@ import { ConcursosPage } from './pages/Concursos/ConcursosPage.tsx'
 import { CargosPage } from './pages/Cargos/CargosPage.tsx'
 import { CandidatosPage } from './pages/Candidatos/CandidatosPage.tsx'
 import { HomePage } from './pages/Home/HomePage.tsx'
-import { InscricoesPage } from './pages/Inscricoes/InscricoesPage.tsx'
+import { InscricaoFormPage } from './pages/Inscricoes/InscricaoFormPage.tsx'
+import { InscricoesListPage } from './pages/Inscricoes/InscricoesListPage.tsx'
 
 type Usuario = {
   id: number
   nome: string
   email: string
-  isAdmin?: boolean // Indica se o usuário é administrador
+  isAdmin?: boolean
 }
 
 function App() {
   const [usuario, setUsuario] = useState<Usuario | null>(null)
   const [pagina, setPagina] = useState('home')
+  const [recarregar, setRecarregar] = useState(0)
 
-  // Controla a navegação e protege as áreas restritas
+  // Controla a navegação e protege as páginas restritas
   function navegar(destino: string) {
-    if (destino === 'inscricoes' && !usuario) {
+    if (
+      (destino === 'inscricoes' || destino === 'nova-inscricao') &&
+      !usuario
+    ) {
       setPagina('login')
       return
     }
 
-    // Se tentar acessar páginas de admin sem ser admin, manda para a home
-    if ((destino === 'cargos' || destino === 'candidatos') && !usuario?.isAdmin) {
+    if (
+      (destino === 'cargos' || destino === 'candidatos') &&
+      !usuario?.isAdmin
+    ) {
       setPagina('home')
       return
     }
@@ -46,15 +55,15 @@ function App() {
     setPagina(destino)
   }
 
-  // Realiza o login e direciona o usuário
+  // Realiza o login
   function realizarLogin(novoUsuario: Usuario) {
     setUsuario(novoUsuario)
-    // Se for admin, pode ir para inscrições ou home; se comum, vai para inscrições
     setPagina('inscricoes')
   }
 
-  // Encerra a sessão do usuário
+  // Encerra a sessão
   function sair() {
+    definirToken(null)
     setUsuario(null)
     setPagina('home')
   }
@@ -62,7 +71,7 @@ function App() {
   return (
     <Stack gap={0} mih="100vh" bg="#f4f7fb">
 
-      {/* CABEÇALHO FIXO NO TOPO */}
+      {/* CABEÇALHO */}
       <Paper
         radius={0}
         shadow="sm"
@@ -82,7 +91,7 @@ function App() {
             <Anchor
               underline="never"
               c="#17365c"
-              onClick={() => setPagina('home')}
+              onClick={() => navegar('home')}
             >
               <Title order={2} size="h3" fw={800}>
                 Sistema<Text span c="#3978bd">Concursos</Text>
@@ -93,7 +102,7 @@ function App() {
               <Button
                 variant="subtle"
                 color="dark"
-                onClick={() => setPagina('home')}
+                onClick={() => navegar('home')}
               >
                 Início
               </Button>
@@ -106,13 +115,25 @@ function App() {
                 Concursos
               </Button>
 
-              <Button
-                variant="subtle"
-                color="dark"
-                onClick={() => navegar('inscricoes')}
-              >
-                Minhas inscrições
-              </Button>
+              {usuario && (
+                <>
+                  <Button
+                    variant="subtle"
+                    color="dark"
+                    onClick={() => navegar('nova-inscricao')}
+                  >
+                    Nova inscrição
+                  </Button>
+
+                  <Button
+                    variant="subtle"
+                    color="dark"
+                    onClick={() => navegar('inscricoes')}
+                  >
+                    Minhas inscrições
+                  </Button>
+                </>
+              )}
 
               {usuario ? (
                 <>
@@ -120,19 +141,12 @@ function App() {
                     Olá, {usuario.nome} {usuario.isAdmin && '(Admin)'}
                   </Text>
 
-                  <Button
-                    color="red"
-                    variant="light"
-                    onClick={sair}
-                  >
+                  <Button color="red" variant="light" onClick={sair}>
                     Sair
                   </Button>
                 </>
               ) : (
-                <Button
-                  color="blue"
-                  onClick={() => setPagina('login')}
-                >
+                <Button color="blue" onClick={() => setPagina('login')}>
                   Entrar
                 </Button>
               )}
@@ -164,32 +178,44 @@ function App() {
           {/* CONCURSOS */}
           {pagina === 'concursos' && (
             <Container size="xl" py="xl">
-              <ConcursosPage />
+              <ConcursosPage isAdmin={usuario?.isAdmin === true} />
             </Container>
           )}
 
-          {/* CARGOS (Apenas para Admin) */}
+          {/* CARGOS */}
           {pagina === 'cargos' && usuario?.isAdmin && (
             <Container size="xl" py="xl">
               <CargosPage />
             </Container>
           )}
 
-          {/* CANDIDATOS (Apenas para Admin) */}
+          {/* CANDIDATOS */}
           {pagina === 'candidatos' && usuario?.isAdmin && (
             <Container size="xl" py="xl">
               <CandidatosPage />
             </Container>
           )}
 
-          {/* INSCRIÇÕES */}
-          {pagina === 'inscricoes' && usuario && (
+          {/* FORMULÁRIO DE NOVA INSCRIÇÃO */}
+          {pagina === 'nova-inscricao' && usuario && (
             <Container size="xl" py="xl">
-              <InscricoesPage />
+              <InscricaoFormPage
+                onSucesso={() => {
+                  setRecarregar((valor) => valor + 1)
+                  setPagina('inscricoes')
+                }}
+              />
             </Container>
           )}
 
-          {/* MENU ADMINISTRATIVO (Visível SOMENTE se o usuário for Admin) */}
+          {/* LISTAGEM DE INSCRIÇÕES */}
+          {pagina === 'inscricoes' && usuario && (
+            <Container size="xl" py="xl">
+              <InscricoesListPage recarregarKey={recarregar} />
+            </Container>
+          )}
+
+          {/* MENU ADMINISTRATIVO */}
           {usuario?.isAdmin && (
             <Container size="xl" py="md">
               <Paper p="md" radius="md" withBorder>
@@ -239,7 +265,7 @@ function App() {
             <Stack gap={5}>
               <Text fw={700}>Navegação</Text>
 
-              <Anchor c="gray.3" onClick={() => setPagina('home')}>
+              <Anchor c="gray.3" onClick={() => navegar('home')}>
                 Página inicial
               </Anchor>
 
@@ -257,12 +283,7 @@ function App() {
 
           </Group>
 
-          <Text
-            ta="center"
-            size="xs"
-            c="gray.4"
-            mt="xl"
-          >
+          <Text ta="center" size="xs" c="gray.4" mt="xl">
             © 2026 SistemaConcursos. Todos os direitos reservados.
           </Text>
         </Container>
@@ -273,3 +294,4 @@ function App() {
 }
 
 export default App
+

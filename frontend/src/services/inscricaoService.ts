@@ -1,3 +1,4 @@
+
 import { request } from './api.ts'
 
 export interface Inscricao {
@@ -23,10 +24,21 @@ export const inscricaoService = {
     const qs = params.toString()
     return request<Inscricao[]>(`/inscricoes${qs ? `?${qs}` : ''}`)
   },
+
   buscarPorId: (id: number) => request<Inscricao>(`/inscricoes/${id}`),
+
   criar: (dados: InscricaoInput) =>
-    request<Inscricao>('/inscricoes', { method: 'POST', body: JSON.stringify(dados) }),
+    request<Inscricao>('/inscricoes', {
+      method: 'POST',
+      body: JSON.stringify(dados),
+    }),
+
   atualizar: (id: number, dados: InscricaoInput) =>
-    request<Inscricao>(`/inscricoes/${id}`, { method: 'PUT', body: JSON.stringify(dados) }),
-  excluir: (id: number) => request<void>(`/inscricoes/${id}`, { method: 'DELETE' }),
+    request<Inscricao>(`/inscricoes/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(dados),
+    }),
+
+  excluir: (id: number) =>
+    request<void>(`/inscricoes/${id}`, { method: 'DELETE' }),
 }

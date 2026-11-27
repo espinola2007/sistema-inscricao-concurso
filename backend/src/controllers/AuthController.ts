@@ -1,4 +1,4 @@
-
+import { gerarToken } from "../config/token.js";
 import type { Request, Response } from "express";
 import { loginUsuarioSchema } from "@concursos/shared";
 import { autenticar } from "../services/authService.js";
@@ -25,6 +25,7 @@ export async function login(req: Request, res: Response) {
   return res.status(200).json({
     mensagem: "Credenciais válidas",
     usuario,
+    token: gerarToken(usuario),
   });
   
 }
@@ -55,5 +56,6 @@ export async function cadastro(req: Request, res: Response) {
   }
 
   return res.status(201).json(usuario);
+
 }
 

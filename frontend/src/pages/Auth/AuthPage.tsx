@@ -13,17 +13,19 @@ import {
   cadastroUsuarioSchema,
   loginUsuarioSchema,
 } from '@concursos/shared'
-import { request } from '../../services/api'
+import { request, definirToken } from '../../services/api'
 
 type Usuario = {
   id: number
   nome: string
   email: string
+  isAdmin: boolean
 }
 
 type RespostaLogin = {
   mensagem: string
   usuario: Usuario
+  token: string
 }
 
 type AuthPageProps = {
@@ -77,6 +79,7 @@ export function AuthPage({ onLogin }: AuthPageProps) {
           body: JSON.stringify({ email, senha }),
         })
 
+        definirToken(resposta.token)
         onLogin(resposta.usuario)
       }
     } catch (e) {

@@ -11,13 +11,15 @@ async function main() {
 
   await prisma.usuario.upsert({
     where: { email },
-    update: {},
+        update: { isAdmin: true },
     create: {
       nome: "Administrador",
       email,
       senhaHash,
+      isAdmin: true,
     },
-  });
+    },
+  );
 
   // 2. Concurso de exemplo
   const nomeConcurso = "Concurso de Demonstração A2";

@@ -37,7 +37,7 @@ const formularioVazio = {
   status: 'ABERTO' as 'ABERTO' | 'ENCERRADO',
 }
 
-export function ConcursosPage() {
+export function ConcursosPage({ isAdmin }: { isAdmin: boolean }) {
   const [concursos, setConcursos] = useState<Concurso[]>([])
   const [busca, setBusca] = useState('')
   const [aberto, setAberto] = useState(false)
@@ -59,6 +59,7 @@ export function ConcursosPage() {
   }, [])
 
   function novo() {
+    if (!isAdmin) return
     setEditando(null)
     setFormulario({ ...formularioVazio })
     setErro('')
@@ -66,6 +67,7 @@ export function ConcursosPage() {
   }
 
   function editar(concurso: Concurso) {
+    if (!isAdmin) return
     setEditando(concurso.id)
     setFormulario({
       nome: concurso.nome,
@@ -80,6 +82,7 @@ export function ConcursosPage() {
   }
 
   async function salvar() {
+    if (!isAdmin) return
     setErro('')
 
     const dados = {
@@ -122,6 +125,7 @@ export function ConcursosPage() {
   }
 
   async function excluir(concurso: Concurso) {
+    if (!isAdmin) return
     if (!window.confirm(`Excluir o concurso "${concurso.nome}"?`)) return
 
     setErro('')
@@ -144,7 +148,7 @@ export function ConcursosPage() {
     <Stack p="md">
       <Group justify="space-between">
         <Title order={2}>Concursos</Title>
-        <Button onClick={novo}>Novo concurso</Button>
+        {isAdmin && <Button onClick={novo}>Novo concurso</Button>}
       </Group>
 
       {!aberto && erro && (
@@ -164,7 +168,7 @@ export function ConcursosPage() {
             <Table.Th>Nome</Table.Th>
             <Table.Th>Órgão</Table.Th>
             <Table.Th>Status</Table.Th>
-            <Table.Th>Ações</Table.Th>
+            {isAdmin && <Table.Th>Ações</Table.Th>}
           </Table.Tr>
         </Table.Thead>
 
@@ -174,7 +178,7 @@ export function ConcursosPage() {
               <Table.Td>{concurso.nome}</Table.Td>
               <Table.Td>{concurso.orgao}</Table.Td>
               <Table.Td>{concurso.status}</Table.Td>
-              <Table.Td>
+              {isAdmin && <Table.Td>
                 <Group gap="xs">
                   <Button
                     size="xs"
@@ -192,7 +196,7 @@ export function ConcursosPage() {
                     Excluir
                   </Button>
                 </Group>
-              </Table.Td>
+              </Table.Td>}
             </Table.Tr>
           ))}
         </Table.Tbody>
@@ -201,7 +205,7 @@ export function ConcursosPage() {
       {filtrados.length === 0 && <p>Nenhum concurso encontrado.</p>}
 
       <Modal
-        opened={aberto}
+        opened={isAdmin && aberto}
         onClose={() => setAberto(false)}
         title={editando === null ? 'Novo concurso' : 'Editar concurso'}
         centered

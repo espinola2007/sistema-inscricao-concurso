@@ -1,4 +1,4 @@
-
+import { exigirAdmin } from "../middlewares/autorizacao.js";
 import Router from "express";
 
 import * as controller from "../controllers/ConcursoController.js";
@@ -24,18 +24,21 @@ router.get(
 
 router.post(
   "/concursos",
+  exigirAdmin,
   validarBody(criarConcursoSchema),
   controller.cadastrar,
 );
 
 router.put(
   "/concursos/:id",
+  exigirAdmin,
   validarBody(atualizarConcursoSchema),
   controller.atualizar,
 );
 
 router.delete(
   "/concursos/:id",
+  exigirAdmin,
   controller.excluir,
 );
 

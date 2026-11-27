@@ -7,6 +7,7 @@ CREATE TABLE "usuarios" (
     "criado_em" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "usuarios_pkey" PRIMARY KEY ("id")
+    
 );
 
 -- CreateIndex
