@@ -18,7 +18,7 @@ O projeto utiliza uma API REST integrada a uma aplicação React e um banco de d
 | Maria Vitória Espínola Carneiro | [INSERIR RGM] | Concursos, Cargos e autenticação |
 | Anny [COMPLETAR NOME] | [INSERIR RGM] | Inscrições |
 | Evelyn Vivian Silva da Costa | 44734212 | Candidatos |
-| Tainara [COMPLETAR NOME] | [INSERIR RGM] | Frontend |
+| Tainara David De França | 42786967 | Frontend |
 
 A integração final do sistema contou com a implementação e adaptação de funcionalidades entre os módulos.
 
