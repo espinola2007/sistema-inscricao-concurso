@@ -372,6 +372,6 @@ npm test -w api
 
 ## 14. Vídeo de apresentação
 
-**Link:** 
+Link:https://www.youtube.com/watch?v=f45oNT4EZ5s
 
 O vídeo deverá apresentar o funcionamento do sistema, a organização do código, as tecnologias utilizadas e as principais operações implementadas.
